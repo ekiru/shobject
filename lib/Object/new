@@ -1,0 +1,7 @@
+#!/bin/sh
+PATH=/bin:/usr/bin
+
+TMP_DIR="${TMP_DIR:-/tmp}"
+obj=$(mktemp -p "$TMP_DIR" -d shobject-lib-Object-XXXXXXXXXXXXX) &&
+echo "$(dirname $0)" > "$obj"/class &&
+echo "$obj"

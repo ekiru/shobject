@@ -1,0 +1,91 @@
+#!/bin/sh
+PATH=/bin:/usr/bin
+
+SHOBJECT_LIBDIR="${SHOBJECT_LIBDIR:-$HOME/.shobject}"
+
+EUSAGE=1
+ENYI=2
+EINTERNAL=3
+EINVALIDOBJ=4
+EINVALIDMETHOD=5
+
+usage() {
+	echo "Usage: $0 expr" >&2
+	echo "	Evaluates the expr and outputs the result." >&2
+	exit $EUSAGE
+}
+
+findobject() {
+	if [ $# -ne 1 ]
+	then
+		echo "Internal error: findobject: improper argument count $#" >&2
+		exit $EINTERNAL
+	fi
+	if [ -d "$1" ]
+	then
+		echo "$1"
+	elif [ -d "$SHOBJECT_LIBDIR"/"$1" ]
+	then
+		echo "$SHOBJECT_LIBDIR"/"$1"
+	else
+		echo "$0: non-existent object $1" >&2
+		exit $EINVALIDOBJ
+	fi
+}
+
+findmethod() {
+	if [ $# -ne 2 ]
+	then
+		echo "Internal error: findmethod: improper argument count $#" >&2
+		exit $EINTERNAL
+	fi
+	if [ -x "$1"/"$2" ]
+	then
+		echo "$1"/"$2"
+		return 0
+	else
+		return 1
+	fi
+}
+
+findslot() {
+	if [ $# -ne 2 ]
+	then
+		echo "Internal error: findslot: improper argument count $#" >&2
+		exit $INTERNAL
+	fi
+	if [ -f "$1"/"$2" ]
+	then
+		echo "$1"/"$2"
+		return 0
+	else
+		return 1
+	fi
+}
+
+if [ $# -eq 0 ]
+then
+	usage
+elif [ $# -eq 1 ]
+then
+	findobject $1
+elif [ $# -eq 2 ]
+then
+	self="$(findobject $1)"
+	method_name="$2"
+	if method=$(findmethod "$self" "$method_name")
+	then
+		eval "$method"
+		exit $?
+	elif slot=$(findslot "$self" "$method_name")
+	then
+		cat "$slot"
+		exit $?
+	else
+		echo "$0: method $method_name not found for object $self" >&2
+		exit $EINVALIDMETHOD
+	fi
+else
+	echo "$0: method calls with arguments NYI" >&2
+	exit $ENYI
+fi
