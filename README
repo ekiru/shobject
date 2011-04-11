@@ -5,3 +5,18 @@ Objects are represented by directories. Methods are just executable files contai
 It is planned to implement a system for access control of properties using standard POSIX access control mechanisms: just remove write permission from a property to make it readonly.
 
 Currently, objects are "allocated" as temporary directories in /tmp, and are never deallocated (although reboots generally do clean out /tmp). A better system needs to be figured out. Possibly something involving reference counting with periodic checks for objects without any refcounts. How to deal with situations where such a sweep catches an object that has been created but hasn't yet had ref called on it is an open question.
+
+There is also support for referring to certain library objects using a abbreviated name. If an object name is not found as an existing directory, "$SHOBJECT_LIBDIR"/"$object_name" will be used as the object, if found. It is recommended to set SHOBJECT_LIBDIR to the lib directory in the shobject installation.
+
+Examples:
+
+	$ point=$(./object Object new)
+	$ ./object "$point" addProperty x
+	$ ./object "$point" addProperty y
+	$ origin=$(./object "$point" new)
+	$ ./object "$origin" x = 0
+	$ ./object "$origin" y = 0
+	$ ./object "$origin" x
+	0
+	$ ./object "$origin" y
+	0
