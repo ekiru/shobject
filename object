@@ -43,21 +43,10 @@ findmethod() {
 	then
 		echo "$1"/"$2"
 		return 0
-	else
-		return 1
-	fi
-}
-
-findslot() {
-	if [ $# -ne 2 ]
+	elif [ -d "$1"/.prototype ]
 	then
-		echo "Internal error: findslot: improper argument count $#" >&2
-		exit $INTERNAL
-	fi
-	if [ -f "$1"/"$2" ]
-	then
-		echo "$1"/"$2"
-		return 0
+		findmethod "$1"/.prototype $2
+		return $?
 	else
 		return 1
 	fi
@@ -76,10 +65,6 @@ then
 	if method=$(findmethod "$self" "$method_name")
 	then
 		eval "$method"
-		exit $?
-	elif slot=$(findslot "$self" "$method_name")
-	then
-		cat "$slot"
 		exit $?
 	else
 		echo "$0: method $method_name not found for object $self" >&2
