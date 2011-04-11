@@ -1,0 +1,7 @@
+This is shobject. It implements a prototypical object system for your shell scripting needs.
+
+Objects are represented by directories. Methods are just executable files contained within an object. Properties can be implemented with a file within an object and a method to handle reading and writing them (or even as a method which modifies itself to contain the new value. An object can currently only have one prototype, which is contained as a symlink(typically) named ".prototype" to another object within the object.
+
+It is planned to implement a system for access control of properties using standard POSIX access control mechanisms: just remove write permission from a property to make it readonly.
+
+Currently, objects are "allocated" as temporary directories in /tmp, and are never deallocated (although reboots generally do clean out /tmp). A better system needs to be figured out. Possibly something involving reference counting with periodic checks for objects without any refcounts. How to deal with situations where such a sweep catches an object that has been created but hasn't yet had ref called on it is an open question.
