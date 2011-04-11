@@ -58,19 +58,17 @@ then
 elif [ $# -eq 1 ]
 then
 	findobject $1
-elif [ $# -eq 2 ]
-then
+else
 	export self="$(findobject $1)"
 	method_name="$2"
 	if method=$(findmethod "$self" "$method_name")
 	then
-		eval "$method"
+		shift
+		shift
+		eval "$method" "$@"
 		exit $?
 	else
 		echo "$0: method $method_name not found for object $self" >&2
 		exit $EINVALIDMETHOD
 	fi
-else
-	echo "$0: method calls with arguments NYI" >&2
-	exit $ENYI
 fi
