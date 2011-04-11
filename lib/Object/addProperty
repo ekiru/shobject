@@ -9,14 +9,6 @@ case $# in
 	exit 1;;
 esac
 
-if [ ! '(' -d "$self"/.properties ')' ]
-then
-	mkdir "$self"/.properties || {
-		echo "$self: $0: couldn't create .properties directory." >&2
-		exit 1
-	}
-fi
-
 echo "$2" > "$self"/.properties/"$1" &&
 touch "$self"/"$1" &&
 echo '#!/bin/sh' > "$self"/"$1" &&
