@@ -1,0 +1,32 @@
+#!/bin/sh
+PATH=/bin:/usr/bin
+
+case $# in
+	1) break;;
+	2) break;;
+	*)
+	echo "$self: $0: requires 1 or 2 arguments" >&2
+	exit 1;;
+esac
+
+if [ ! '(' -d "$self"/.properties ')' ]
+then
+	mkdir "$self"/.properties || {
+		echo "$self: $0: couldn't create .properties directory." >&2
+		exit 1
+	}
+fi
+
+echo "$2" > "$self"/.properties/"$1" &&
+touch "$self"/"$1" &&
+echo '#!/bin/sh' > "$self"/"$1" &&
+echo 'PATH=/bin:/usr/bin' >> "$self"/"$1" &&
+echo 'if [ $# -eq 0 ]; then' >> "$self"/"$1" &&
+	echo '/bin/cat $self/.properties/'"$1" >> "$self"/"$1" &&
+echo 'elif [ $# -eq 2 ] && [ x$1 = 'x=' ]; then' >> "$self"/"$1" &&
+	echo 'echo "$2" > $self/.properties/'"$1" >> "$self"/"$1" &&
+echo 'else' >> "$self"/"$1" &&
+	echo 'echo "$self: $0: requires 0 or 2 arguments" >&2' >> "$self"/"$1" &&
+	echo 'exit 1' >> "$self"/"$1" &&
+echo 'fi' >> "$self"/"$1" &&
+chmod u+x "$self"/"$1"
