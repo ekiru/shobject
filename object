@@ -60,7 +60,7 @@ then
 	findobject $1
 elif [ $# -eq 2 ]
 then
-	self="$(findobject $1)"
+	export self="$(findobject $1)"
 	method_name="$2"
 	if method=$(findmethod "$self" "$method_name")
 	then
